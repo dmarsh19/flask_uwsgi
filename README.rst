@@ -30,7 +30,7 @@ cd /var/www
 # this is a barebones web app. No virtualenv.
 # and yes, maybe the entire project shouldn't be in /var/www. chmod your files right and you'll be fine.
 sudo git clone https://github.com/dmarsh19/flask_uwsgi.git
-touch flask_uwsgi/settings.py
+sudo touch flask_uwsgi/settings.py
 #sudo chgrp -R www-data /var/www/flask_uwsgi
 sudo chown -R www-data:www-data /var/www/flask_uwsgi
 #sudo chmod -R g=rwX /var/www/flask_uwsgi
@@ -39,6 +39,7 @@ sudo chmod -R u=rwX,g=srX,o=rX /var/www/flask_uwsgi
 sudo python3 -m pip install -r flask_uwsgi/requirements.txt
 ##########
 sudo mv flask_uwsgi/flask_uwsgi.conf /etc/init
+sudo start flask_uwsgi
 sudo mv flask_uwsgi/flask_uwsgi.nginx /etc/nginx/sites-available/flask_uwsgi
 sudo ln -s /etc/nginx/sites-available/flask_uwsgi /etc/nginx/sites-enabled/flask_uwsgi
 # test syntax errors
