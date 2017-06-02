@@ -1,6 +1,6 @@
 server {
     listen 80;
-    server_name server_domain_or_IP;
+    server_name ec2-34-201-243-182.compute-1.amazonaws.com;
 
     location / {
         include uwsgi_params;
