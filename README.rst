@@ -15,6 +15,14 @@ sudo ./infrastructure_project/1install_base.sh
 source ~/.bashrc
 # python-dev?
 sudo ./infrastructure_project/12install_nginx.sh
+# if development (need a virtualenv), follow the tabbed instructions (then skip past to #######):
+#   git clone https://github.com/dmarsh19/flask_uwsgi.git flask_uwsgi
+#   cd ..
+#   ./dev/infrastructure_project/6init_project.py
+#   #flask_uwsgi; Y; 3
+#   workon flask_uwsgi
+#   # you'll need to edit the nginx config to point to the correct sock location and
+#   # edit wsgi.py to run the virtualenv python
 cd /var/www
 # will install as root, needs permissions set for a web user (www-data?)
 # rename local dir in /var/www from git clone to the url? (i.e. twiml.admrsh.com)
@@ -22,13 +30,17 @@ cd /var/www
 # this is a barebones web app. No virtualenv.
 # and yes, maybe the entire project shouldn't be in /var/www. chmod your files right and you'll be fine.
 sudo git clone https://github.com/dmarsh19/flask_uwsgi.git
-sudo chgrp -R www-data /var/www/flask_uwsgi
-sudo chmod -R g=rwX /var/www/flask_uwsgi
-# sticky bit to keep new files owned by www-data but this is 755, not 775 as above
-#sudo chmod -R u=rwX,g=srX,o=rX /var/www/uwsgi
-sudo python3 -m pip install -r flask_uwsgi/requirements.txt
 touch flask_uwsgi/settings.py
-# nginx needs to restart or reload?
+sudo chgrp -R www-data /var/www/flask_uwsgi
+#sudo chmod -R g=rwX /var/www/flask_uwsgi
+# sticky bit to keep new files owned by www-data but this is 755, not 775 as above
+sudo chmod -R u=rwX,g=srX,o=rX /var/www/flask_uwsgi
+sudo python3 -m pip install -r flask_uwsgi/requirements.txt
+##########
+sudo mv flask_uwsgi/flask_uwsgi.nginx /etc/nginx/sites-available/flask_uwsgi
+sudo ln -s /etc/nginx/sites-available/flask_uwsgi /etc/nginx/sites-sites-enabled/flask_uwsgi
+# test syntax errors
+#sudo nginx -t
 sudo service nginx restart
 navigate to the url
 
@@ -40,14 +52,6 @@ For production:
     write log to /var/log
     run under low permission user
 
-
-
-
-#chmod 775 flask_lighttpd.fcgi
-#chmod 775 runserver.py
-
-# may need to change python path in these files:
-runserver.fcgi (2 locations)
-runserver.py
 settings.py (APP_LOGFILE)
-below for bin-path in lighttpd.conf, fcgi
+
+
