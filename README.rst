@@ -39,12 +39,12 @@ sudo chmod -R u=rwX,g=srX,o=rX /var/www/flask_uwsgi
 sudo python3 -m pip install -r flask_uwsgi/requirements.txt
 ##########
 sudo mv flask_uwsgi/flask_uwsgi.service /etc/systemd/system
-sudo service start flask_uwsgi
+sudo service flask_uwsgi start
 sudo mv flask_uwsgi/flask_uwsgi.nginx /etc/nginx/sites-available/flask_uwsgi
 sudo ln -s /etc/nginx/sites-available/flask_uwsgi /etc/nginx/sites-enabled/flask_uwsgi
 sudo rm /etc/nginx/sites-enabled/default
 # test syntax errors
-#sudo nginx -t
+sudo nginx -t
 sudo service nginx restart
 navigate to the url
 
