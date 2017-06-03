@@ -7,6 +7,8 @@ ExecStart=/usr/local/bin/uwsgi --ini /var/www/flask_uwsgi/flask_uwsgi.ini --uid 
 # Requires systemd version 211 or newer
 RuntimeDirectory=uwsgi
 KillSignal=SIGQUIT
+ExecReload=/bin/kill -HUP %MAINPID
+ExecStop=/bin/kill -INT $MAINPID
 Restart=always
 Type=notify
 StandardError=syslog
