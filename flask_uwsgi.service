@@ -3,7 +3,7 @@ Description="uWSGI server instance configured to serve flask_uwsgi"
 After=syslog.target
 
 [Service]
-ExecStart=/usr/local/bin/uwsgi --ini /var/www/flask_uwsgi/flask_uwsgi.ini --uid www-data --gid www-data
+ExecStart=/usr/local/bin/uwsgi --ini /var/www/flask_uwsgi/flask_uwsgi.ini --uid www-data --gid www-data --chdir /var/www/flask_uwsgi
 # Requires systemd version 211 or newer
 RuntimeDirectory=uwsgi
 KillSignal=SIGQUIT
@@ -15,11 +15,3 @@ NotifyAccess=all
 
 [Install]
 WantedBy=multi-user.target
-
-
-setuid www-data
-setgid www-data
-
-env PATH=/usr/local/bin
-chdir /var/www/flask_uwsgi
-exec uwsgi 
