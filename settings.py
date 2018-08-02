@@ -1,4 +1,4 @@
 DEBUG = False
 
-APP_LOGFILE = '/var/log/nginx/flask_uwsgi.log'
+APP_LOGFILE = '/var/log/flask_uwsgi/flask_uwsgi.log'
 
