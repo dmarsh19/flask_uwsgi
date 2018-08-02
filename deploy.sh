@@ -1,13 +1,49 @@
-sudo touch flask_uwsgi/settings.py
-sudo chown -R www-data:www-data /var/www/flask_uwsgi
-# sticky bit to keep new files owned by www-data; 755
-sudo chmod -R u=rwX,g=srX,o=rX /var/www/flask_uwsgi
-sudo python3 -m pip install -r flask_uwsgi/requirements.txt
-sudo mv flask_uwsgi/flask_uwsgi.service /etc/systemd/system
-sudo service flask_uwsgi start
-sudo mv flask_uwsgi/flask_uwsgi.nginx /etc/nginx/sites-available/flask_uwsgi
-sudo ln -s /etc/nginx/sites-available/flask_uwsgi /etc/nginx/sites-enabled/flask_uwsgi
-sudo rm /etc/nginx/sites-enabled/default
+#!/bin/bash
+
+as_root()
+{
+  # Make sure we are root
+  if [ $(id -u) -ne 0 ]
+    then
+      echo "Insufficient privileges."
+      exit -1
+  fi
+}
+as_root
+
+PROJECT_NAME=flask_uwsgi
+SRV_DEST=/srv/nginx/${PROJECT_NAME}_project
+
+python3 -m pip install -r requirements.txt
+
+mkdir -m 0755 $SRV_DEST
+cp -r ${PROJECT_NAME} settings.py wsgi.py flask_uwsgi.ini $SRV_DEST
+
+chown -R www-data:www-data $SRV_DEST
+
+cp ${PROJECT_NAME}.service /etc/systemd/system
+systemctl start ${PROJECT_NAME}
+
+cat > /etc/nginx/sites-available/${PROJECT_NAME} << EOF_NGINX
+server {
+    listen 80;
+    server_name localhost;
+
+    location / {
+        include uwsgi_params;
+        uwsgi_pass unix:/tmp/${PROJECT_NAME}-uwsgi.sock;
+    }
+}
+
+EOF_NGINX
+
+ln -s /etc/nginx/sites-available/${PROJECT_NAME} /etc/nginx/sites-enabled/${PROJECT_NAME}
+rm /etc/nginx/sites-enabled/default
+
 # test syntax errors
 sudo nginx -t
-sudo service nginx restart
+
+systemctl restart nginx
+
+exit 0
+
